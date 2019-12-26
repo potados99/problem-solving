@@ -351,30 +351,3 @@ def from_input():
         cube.dump(Cube.U)
 
 from_input()
-
-#cube = Cube()
-"""
-cube.rotate_face('U', '-', True)
-cube.rotate_face('D', '-', True)
-cube.rotate_face('L', '+', True)
-cube.rotate_face('R', '+', True)
-"""
-"""
-cube.rotate_face('L', '-', True)
-cube.rotate_face('U', '-', True)
-cube.rotate_face('L', '+', True)
-cube.rotate_face('U', '-', True)
-cube.rotate_face('L', '-', True)
-cube.rotate_face('U', '-', True)
-cube.rotate_face('U', '-', True)
-cube.rotate_face('L', '+', True)
-cube.rotate_face('U', '+', True)
-cube.rotate_face('U', '+', True)
-"""
-"""
-for i in range(6):
-    cube.rotate_face('R', '+', True)
-    cube.rotate_face('U', '+', True)
-    cube.rotate_face('R', '-', True)
-    cube.rotate_face('U', '-', True)
-"""
