@@ -3,6 +3,9 @@
 https://www.acmicpc.net/problem/5373
 """
 
+import sys
+input = sys.stdin.readline
+
 class Cube:
     # Colors
     w = 0
@@ -35,18 +38,17 @@ class Cube:
     def __init__(self):
         """
         Orientation:
-            - up: yello     bottom: white
+            - up: white     bottom: yello
             - front: red    back: orage
         """
         self.faces = {
-            self.U: [self.y]*9,
-            self.D: [self.w]*9,
-            self.L: [self.b]*9,
-            self.R: [self.g]*9,
+            self.U: [self.w]*9,
+            self.D: [self.y]*9,
+            self.L: [self.g]*9,
+            self.R: [self.b]*9,
             self.F: [self.r]*9,
             self.B: [self.o]*9
         }
-        print(self.faces)
 
     def _parse_color(self, color: chr):
         return getattr(self, color)
@@ -141,9 +143,10 @@ class Cube:
                     ROT(self.R, self.CCW)
 
                     # Compensate indexing orientation.
+                    ROT(self.U, self.CW)
+                    ROT(self.U, self.CW)
                     ROT(self.D, self.CW)
                     ROT(self.D, self.CW)
-
                 else:
                     # CCW
                     SWAP(self.U, self.B)
@@ -156,6 +159,8 @@ class Cube:
                     # Compensate indexing orientation.
                     ROT(self.F, self.CW)
                     ROT(self.F, self.CW)
+                    ROT(self.D, self.CW)
+                    ROT(self.D, self.CW)
 
             if axis == self.Z:
                 if direction > 0:
@@ -182,7 +187,7 @@ class Cube:
                     ROT(self.D, self.CW)
 
                     # Compensate indexing orientation.
-                    ROT(self.L, self.CCW)
+                    ROT(self.L, self.CW)
                     ROT(self.R, self.CCW)
                     ROT(self.F, self.CCW)
                     ROT(self.B, self.CCW)
@@ -242,7 +247,7 @@ class Cube:
 
         return result
 
-    def rotate_face(self, face: chr, direction: chr):
+    def rotate_face(self, face: chr, direction: chr, verbose=False):
         """
         Rotate the given face of the cube with given direction.
         """
@@ -255,20 +260,21 @@ class Cube:
         # Move the view so the face is at front.
         way_to_go, way_to_return = self._get_path_to_dest_face(face)
 
-        print("Before move view:")
-        self.dump5()
+        if verbose:
+            print("Before move view:")
+            self.dump5()
 
-        print("to go: ")
-        print(way_to_go)
+            print("to go: ")
+            print(way_to_go)
 
-        print("to return: ")
-        print(way_to_return)
+            print("to return: ")
+            print(way_to_return)
 
         self._move_view(way_to_go)
 
-        print("After move view:")
-        self.dump5()
-
+        if verbose:
+            print("After move view:")
+            self.dump5()
 
         # Now the face is at front.
 
@@ -288,13 +294,16 @@ class Cube:
 
         self._swap_part_of_face(self.U, affected, self.D, affected)
 
-        print("After rotate:")
-        self.dump5()
+        if verbose:
+            print("After rotate:")
+            self.dump5()
 
         self._move_view(way_to_return)
 
-        print("After restore view:")
-        self.dump5()
+        if verbose:
+            print("After restore view:")
+            self.dump5()
+            print("")
 
     def dump(self, face: int):
         """
@@ -320,8 +329,39 @@ class Cube:
         print("============== dump end ============")
 
 
-c = Cube()
-c.rotate_face('R', '+')
-c.rotate_face('U', '+')
-c.rotate_face('R', '-')
-c.rotate_face('U', '-')
+def get_cases():
+    n_cases = int(input())
+    cases = []
+
+    for _ in range(n_cases):
+        n_instructions = int(input())
+        instructions = []
+        for instruction in input().split():
+            instructions.append((instruction[0:1], instruction[1:2]))
+        cases.append(instructions)
+
+    return cases
+
+def from_input():
+    for case in get_cases():
+        cube = Cube()
+        for instruction in case:
+            cube.rotate_face(instruction[0], instruction[1])
+        cube.dump(Cube.U)
+
+#from_input()
+
+cube = Cube()
+
+cube.rotate_face('L', '-', True)
+cube.rotate_face('U', '-', True)
+
+exit(0)
+cube.rotate_face('L', '+', True)
+cube.rotate_face('U', '-', True)
+cube.rotate_face('L', '-', True)
+cube.rotate_face('U', '-', True)
+cube.rotate_face('U', '-', True)
+cube.rotate_face('L', '+', True)
+cube.rotate_face('U', '+', True)
+cube.rotate_face('U', '+', True)
