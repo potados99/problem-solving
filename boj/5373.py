@@ -143,10 +143,10 @@ class Cube:
                     ROT(self.R, self.CCW)
 
                     # Compensate indexing orientation.
-                    ROT(self.U, self.CW)
-                    ROT(self.U, self.CW)
                     ROT(self.D, self.CW)
                     ROT(self.D, self.CW)
+                    ROT(self.U, self.CW)
+                    ROT(self.U, self.CW)
                 else:
                     # CCW
                     SWAP(self.U, self.B)
@@ -159,8 +159,8 @@ class Cube:
                     # Compensate indexing orientation.
                     ROT(self.F, self.CW)
                     ROT(self.F, self.CW)
-                    ROT(self.D, self.CW)
-                    ROT(self.D, self.CW)
+                    ROT(self.B, self.CW)
+                    ROT(self.B, self.CW)
 
             if axis == self.Z:
                 if direction > 0:
@@ -174,9 +174,9 @@ class Cube:
 
                     # Compensate indexing orientation.
                     ROT(self.L, self.CW)
-                    ROT(self.R, self.CW)
+                    ROT(self.R, self.CCW)
                     ROT(self.F, self.CW)
-                    ROT(self.B, self.CW)
+                    ROT(self.B, self.CCW)
                 else:
                     # CCW
                     SWAP(self.B, self.L)
@@ -190,7 +190,7 @@ class Cube:
                     ROT(self.L, self.CW)
                     ROT(self.R, self.CCW)
                     ROT(self.F, self.CCW)
-                    ROT(self.B, self.CCW)
+                    ROT(self.B, self.CW)
 
         return instructions
 
@@ -262,7 +262,7 @@ class Cube:
 
         if verbose:
             print("Before move view:")
-            self.dump5()
+            self.dump6()
 
             print("to go: ")
             print(way_to_go)
@@ -274,7 +274,7 @@ class Cube:
 
         if verbose:
             print("After move view:")
-            self.dump5()
+            self.dump6()
 
         # Now the face is at front.
 
@@ -296,13 +296,13 @@ class Cube:
 
         if verbose:
             print("After rotate:")
-            self.dump5()
+            self.dump6()
 
         self._move_view(way_to_return)
 
         if verbose:
             print("After restore view:")
-            self.dump5()
+            self.dump6()
             print("")
 
     def dump(self, face: int):
@@ -314,20 +314,21 @@ class Cube:
                 print(self._color_to_string(self.faces[face][i*3 + j]), end='')
             print("")
 
-    def dump5(self):
+    def dump6(self):
         print("============== dump start ============")
-        print("F:")
-        self.dump(self.F)
         print("U:")
         self.dump(self.U)
+        print("F:")
+        self.dump(self.F)
         print("L:")
         self.dump(self.L)
-        print("D:")
-        self.dump(self.D)
         print("R:")
         self.dump(self.R)
+        print("D:")
+        self.dump(self.D)
+        print("B:")
+        self.dump(self.B)
         print("============== dump end ============")
-
 
 def get_cases():
     n_cases = int(input())
@@ -349,14 +350,18 @@ def from_input():
             cube.rotate_face(instruction[0], instruction[1])
         cube.dump(Cube.U)
 
-#from_input()
+from_input()
 
-cube = Cube()
-
+#cube = Cube()
+"""
+cube.rotate_face('U', '-', True)
+cube.rotate_face('D', '-', True)
+cube.rotate_face('L', '+', True)
+cube.rotate_face('R', '+', True)
+"""
+"""
 cube.rotate_face('L', '-', True)
 cube.rotate_face('U', '-', True)
-
-exit(0)
 cube.rotate_face('L', '+', True)
 cube.rotate_face('U', '-', True)
 cube.rotate_face('L', '-', True)
@@ -365,3 +370,11 @@ cube.rotate_face('U', '-', True)
 cube.rotate_face('L', '+', True)
 cube.rotate_face('U', '+', True)
 cube.rotate_face('U', '+', True)
+"""
+"""
+for i in range(6):
+    cube.rotate_face('R', '+', True)
+    cube.rotate_face('U', '+', True)
+    cube.rotate_face('R', '-', True)
+    cube.rotate_face('U', '-', True)
+"""
