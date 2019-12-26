@@ -2,38 +2,41 @@
 큐빙
 https://www.acmicpc.net/problem/5373
 """
-
 import sys
 input = sys.stdin.readline
 
+
 class Cube:
+    #############
+    # Constants #
+    #############
+
+    # 3x3x3
+    width = 3
+
     # Colors
-    w = 0
-    y = 6
-    r = 1
-    o = 5
-    b = 2
-    g = 4
+    w = 0; y = 6
+    r = 1; o = 5
+    b = 2; g = 4
 
     # Faces
-    U = 1
-    D = 2
-    L = 4
-    R = 8
-    F = 16
-    B = 32
+    U = 1; D = 2
+    L = 4; R = 8
+    F = 16; B = 32
 
     # Directions
-    CW = 1
-    CCW = -1
+    CW = 1; CCW = -1
 
     # Axis
-    X = 1
-    Y = 2
-    Z = 4
+    X = 1; Y = 2; Z = 4
 
-    INST_SWAP = 0
-    INST_ROT = 1
+    # Type of instructions
+    INST_SWAP = 0; INST_ROT = 1
+
+
+    ####################
+    # Internal methods #
+    ####################
 
     def __init__(self):
         """
@@ -42,12 +45,12 @@ class Cube:
             - front: red    back: orage
         """
         self.faces = {
-            self.U: [self.w]*9,
-            self.D: [self.y]*9,
-            self.L: [self.g]*9,
-            self.R: [self.b]*9,
-            self.F: [self.r]*9,
-            self.B: [self.o]*9
+            self.U: [self.w]*(self.width**2),
+            self.D: [self.y]*(self.width**2),
+            self.L: [self.g]*(self.width**2),
+            self.R: [self.b]*(self.width**2),
+            self.F: [self.r]*(self.width**2),
+            self.B: [self.o]*(self.width**2)
         }
 
     def _parse_color(self, color: chr):
@@ -64,15 +67,22 @@ class Cube:
         else:
             return None
 
+    def _attr_to_string_by_value(self, attribute_names, value):
+        for name in attribute_names:
+            if value == getattr(self, name):
+                return name
+
     def _color_to_string(self, color: int):
-        strings = ['w', 'y', 'r', 'o', 'b', 'g']
+        return self._attr_to_string_by_value(['w', 'y', 'r', 'o', 'b', 'g'], color)
 
-        for s in strings:
-            if color == getattr(self, s):
-                return s
+    def _face_to_string(self, face: int):
+        return self._attr_to_string_by_value(['U', 'D', 'L', 'R', 'F', 'B'], face)
 
-    def _oppisite_color(self, color: int):
-        return 6 - color
+    def _direction_to_string(self, direction: int):
+        return self._attr_to_string_by_value(['CW', 'CCW'], direction)
+
+    def _axis_to_string(self, axis: int):
+        return self._attr_to_string_by_value(['X', 'Y', 'Z'], axis)
 
     def _get_path_to_dest_face(self, destination: int):
         """
@@ -198,7 +208,7 @@ class Cube:
         self.faces[a], self.faces[b] = self.faces[b], self.faces[a]
 
     def _rotate_face(self, face: int, direction: int):
-        self.faces[face] = self._square_rotated(self.faces[face], 3, direction)
+        self.faces[face] = self._square_rotated(self.faces[face], self.width, direction)
 
     def _swap_part_of_face(self, a: int, a_range: tuple, b: int, b_range: tuple):
         self.faces[a][a_range[0]:a_range[1]+1], self.faces[b][b_range[0]:b_range[1]+1] = self.faces[b][b_range[0]:b_range[1]+1], self.faces[a][a_range[0]:a_range[1]+1]
@@ -233,19 +243,27 @@ class Cube:
 
         return new_face
 
-    def _square_rotated(self, matrix: list, width: int, direction: int):
-        result = [0 for x in range(width**2)]
+    def _square_rotated(self, matrix: list, width: int, direction: int, repeat=1):
+        if repeat <= 0:
+            return matrix
 
-        if direction > 0:
+        result = [x for x in matrix]
+
+        if direction == self.CW:
             for i in range(width):
                 for j in range(width):
                     result[(i)*width + (j)] = matrix[(width-1-j)*width + (i)]
-        else:
+        elif direction == self.CCW:
             for i in range(width):
                 for j in range(width):
                     result[(i)*width + (j)] = matrix[(j)*width + (width-1-i)]
 
-        return result
+        return self._square_rotated(result, self.width, direction, repeat-1)
+
+
+    ##################
+    # Public methods #
+    ##################
 
     def rotate_face(self, face: chr, direction: chr, verbose=False):
         """
@@ -261,74 +279,108 @@ class Cube:
         way_to_go, way_to_return = self._get_path_to_dest_face(face)
 
         if verbose:
-            print("Before move view:")
-            self.dump6()
+            face_string = self._face_to_string(face)
+            direction_string = self._direction_to_string(direction)
 
-            print("to go: ")
-            print(way_to_go)
+            print("We need to bring {face} to front to rotate it {direction}.".format(face=face_string, direction=direction_string))
+            print("\nBefore view move:")
+            self.dump_figure()
 
-            print("to return: ")
-            print(way_to_return)
+            print("\nPath we need to go: ")
+            [print("- {axis} axis {direction} direction".format(axis=self._axis_to_string(step[0]), direction=self._direction_to_string(step[1]))) for step in way_to_go]
+
+            print("\nWay back home: ")
+            [print("- {axis} axis {direction} direction".format(axis=self._axis_to_string(step[0]), direction=self._direction_to_string(step[1]))) for step in way_to_go]
 
         self._move_view(way_to_go)
 
         if verbose:
-            print("After move view:")
-            self.dump6()
+            print("\nAfter view move:")
+            self.dump_figure()
 
         # Now the face is at front.
 
         # Not only the front face, 6~8 blocks of [U, D, L, R] faces are affected.
-        affected = (6, 8)
+        affected = (self.width**2 - self.width, self.width**2 - 1)
+        swap_part = lambda a, b: self._swap_part_of_face(a, affected, b, affected)
 
         if direction > 0:
             # CW
             self._rotate_face(self.F, self.CW)
-            self._swap_part_of_face(self.U, affected, self.R, affected)
-            self._swap_part_of_face(self.D, affected, self.L, affected)
+            swap_part(self.U, self.R)
+            swap_part(self.D, self.L)
         else:
             # CCW
             self._rotate_face(self.F, self.CCW)
-            self._swap_part_of_face(self.U, affected, self.L, affected)
-            self._swap_part_of_face(self.D, affected, self.R, affected)
+            swap_part(self.U, self.L)
+            swap_part(self.D, self.R)
 
-        self._swap_part_of_face(self.U, affected, self.D, affected)
+        swap_part(self.U, self.D)
 
         if verbose:
-            print("After rotate:")
-            self.dump6()
+            print("\nAfter rotate:")
+            self.dump_figure()
 
         self._move_view(way_to_return)
 
         if verbose:
-            print("After restore view:")
-            self.dump6()
-            print("")
+            print("\nAfter view restore:")
+            self.dump_figure()
+            print("\n")
 
     def dump(self, face: int):
         """
         Print a single side of the cube.
         """
-        for i in range(3):
-            for j in range(3):
-                print(self._color_to_string(self.faces[face][i*3 + j]), end='')
+        for i in range(self.width):
+            for j in range(self.width):
+                print(self._color_to_string(self.faces[face][i*self.width + j]), end='')
             print("")
 
-    def dump6(self):
-        print("============== dump start ============")
-        print("U:")
-        self.dump(self.U)
-        print("F:")
-        self.dump(self.F)
-        print("L:")
-        self.dump(self.L)
-        print("R:")
-        self.dump(self.R)
-        print("D:")
-        self.dump(self.D)
-        print("B:")
-        self.dump(self.B)
-        print("============== dump end ============")
+    def dump_figure(self, padding=1, border=True):
+        if border:
+            print("{space} Dump started {space}".format(space='='*(self.width*2)))
+
+        rotated = lambda m, d, r: self._square_rotated(matrix=self.faces[m], width=self.width, direction=d, repeat=r)
+        print_color = lambda m, i, j: print("{color}".format(color=self._color_to_string(m[i*self.width + j])), end='')
+
+        up = rotated(self.U, 0, 0)
+        left = rotated(self.L, self.CCW, 1)
+        front = rotated(self.F, 0, 0)
+        back = rotated(self.B, 0, 0)
+        right = rotated(self.R, self.CW, 1)
+        down = rotated(self.D, self.CW, 2)
+
+        # Up
+        for i in range(self.width):
+            print(' '*(self.width+padding), end='')
+            for j in range(self.width):
+                print_color(up, i, j)
+            print('')
+
+        print('\n'*padding, end='')
+
+        # Left, front, right, back
+        mid_faces = [left, front, right, back]
+        for i in range(self.width):
+            for j in range(len(mid_faces)):
+                for k in range(self.width):
+                    print_color(mid_faces[j], i, k)
+                print(' '*padding, end='')
+            print('')
+
+        print('\n'*padding, end='')
+
+        # Down
+        for i in range(self.width):
+            print(' '*(self.width+padding), end='')
+            for j in range(self.width):
+                print_color(down, i, j)
+            print('')
+
+        if border:
+            print("{space} Dump finished {space}".format(space='='*(self.width*2)))
+
 
 def get_cases():
     n_cases = int(input())
@@ -343,11 +395,13 @@ def get_cases():
 
     return cases
 
+
 def from_input():
     for case in get_cases():
         cube = Cube()
         for instruction in case:
             cube.rotate_face(instruction[0], instruction[1])
         cube.dump(Cube.U)
+
 
 from_input()
