@@ -4,44 +4,40 @@ https://www.acmicpc.net/problem/16159
 """
 
 from math import factorial as fac
+import sys
+input = sys.stdin.readline
 
 
 class Display:
     char_width = 6
     char_height = 7
 
-    # Font bitmap in hex representation.
+    # For identification.
     font = [
         0x312492300, 0x10c104100, 0x782790780, 0x702102700, 0x10c53e100,
         0x79070248c, 0x410792780, 0x782104100, 0x792792780, 0x1e492782082
     ]
 
-    def __init__(self):
-        self.matrix = [self._get_bit_matrix(num) for num in range(10)]
-
-    def _get_bit_matrix(self, num: int):
-        if not (0 <= num <= 9):
-            return None
-
-        on_bits = self.font[num]
-        rows = []
-        for i in range(self.char_height):
-            row = []
-            for j in range(self.char_width):
-                row.insert(0, on_bits & 1)
-                on_bits >>= 1
-
-            rows.insert(0, row)
-
-        return rows
+    # For print.
+    bitmaps = [
+        [[0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 0, 0], [0, 1, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0], [0, 0, 1, 1, 0, 0], [0, 0, 0, 0, 0, 0]],
+        [[0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0]],
+        [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0]],
+        [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 1, 0], [0, 1, 1, 1, 0, 0], [0, 0, 0, 0, 0, 0]],
+        [[0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0], [0, 1, 0, 1, 0, 0], [1, 1, 1, 1, 1, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0]],
+        [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0], [0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0], [0, 0, 1, 1, 0, 0]],
+        [[0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0]],
+        [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0]], [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0]], [[0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0]]
+    ]
 
     def _parse_single(self, lines_of_row_string: list):
-        parsed_matrix = [[int(char) for char in line] for line in lines_of_row_string]
+        bin_string = ''.join(lines_of_row_string)
+        bits = int(bin_string, base=2)
 
-        if parsed_matrix not in self.matrix:
+        if bits not in self.font:
             return -1
 
-        return self.matrix.index(parsed_matrix)
+        return self.font.index(bits)
 
     def parse(self, lines_of_row_string: list):
         n_digits = len(lines_of_row_string[0]) // self.char_width
@@ -55,8 +51,7 @@ class Display:
         return [self._parse_single(digit) for digit in digits]
 
     def print(self, nums: list):
-        matrix = [self._get_bit_matrix(num) for num in nums]
-
+        matrix = [self.bitmaps[num] for num in nums]
         for line in range(self.char_height):
             for digit in range(len(matrix)):
                 for column in range(self.char_width):
@@ -64,42 +59,39 @@ class Display:
             print("")
 
 
-def permutation_recursive(data: list, n: int, r: int, results: list):
-    if r == 0:
-        results.append([x for x in data])
-
-    for i in range(n):
-        data[i], data[n-1] = data[n-1], data[i]
-        permutation_recursive(data, n-1, r-1, results)
-        data[i], data[n-1] = data[n-1], data[i]
-
-
-def create_permutations(nums: list):
-    permutations = []
-    permutation_recursive(nums, len(nums), len(nums), permutations)
-    return sorted(permutations)
-
-
-def next_element(element, collection: list):
-    if element not in collection:
-        return None
-
-    element_index = collection.index(element)
-
-    if element_index == len(collection) - 1:
-        # No next. It is the last.
-        return None
+def next_element(element):
+    index_digit_to_swap = -1
+    last_digit_value = -1
+    for i in range(len(element)-1, -1, -1):
+        if element[i] < last_digit_value:
+            index_digit_to_swap = i
+            break
+        last_digit_value = element[i]
     else:
-        return collection[element_index + 1]
+        return None
+
+    min_index = -1
+    last_min = 99999
+    for i in range(index_digit_to_swap+1, len(element)):
+        if element[index_digit_to_swap] < element[i] < last_min:
+            min_index = i
+            last_min = element[i]
+
+    element[index_digit_to_swap], element[min_index] = element[min_index], element[index_digit_to_swap]
+
+    return element[:index_digit_to_swap+1] + sorted(element[index_digit_to_swap+1:])
 
 
 if __name__ == "__main__":
+    """
     display = Display()
     lines = [input() for _ in range(Display.char_height)]
     parsed = display.parse(lines)
-    permutations = create_permutations(parsed)
-    next = next_element(parsed, permutations)
+    next = next_element(parsed)
     if next is None:
         print("The End")
     else:
         display.print(next)
+    """
+
+    print(next_element([4,2,3,2]))
