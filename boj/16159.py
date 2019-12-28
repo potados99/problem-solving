@@ -83,7 +83,6 @@ def next_element(element):
 
 
 if __name__ == "__main__":
-    """
     display = Display()
     lines = [input() for _ in range(Display.char_height)]
     parsed = display.parse(lines)
@@ -92,6 +91,3 @@ if __name__ == "__main__":
         print("The End")
     else:
         display.print(next)
-    """
-
-    print(next_element([4,2,3,2]))
