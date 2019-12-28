@@ -229,20 +229,6 @@ class Cube:
                 direction = step[2]
                 self._rotate_face(face, direction)
 
-    def _transform_instruction(self, face: int, path: list):
-        """
-        Transform an instruction along with the path.
-        """
-
-        new_face = face
-        swaps = self._get_swap_instructions(face, path)
-
-        for step in swaps:
-            if new_face == step[0]:
-                new_face = step[1]
-
-        return new_face
-
     def _square_rotated(self, matrix: list, width: int, direction: int, repeat=1):
         if repeat <= 0:
             return matrix
