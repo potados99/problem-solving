@@ -27,11 +27,13 @@ class Display:
         [[0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0], [0, 1, 0, 1, 0, 0], [1, 1, 1, 1, 1, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0]],
         [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0], [0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0], [0, 0, 1, 1, 0, 0]],
         [[0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0]],
-        [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0]], [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0]], [[0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0]]
+        [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0]],
+        [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0]],
+        [[0, 1, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0]]
     ]
 
-    def _parse_single(self, lines_of_row_string: list):
-        bin_string = ''.join(lines_of_row_string)
+    def _parse_single(self, row_strings: list):
+        bin_string = ''.join(row_strings)
         bits = int(bin_string, base=2)
 
         if bits not in self.font:
@@ -39,11 +41,11 @@ class Display:
 
         return self.font.index(bits)
 
-    def parse(self, lines_of_row_string: list):
-        n_digits = len(lines_of_row_string[0]) // self.char_width
+    def parse(self, row_strings: list):
+        n_digits = len(row_strings[0]) // self.char_width
         digits = [[] for _ in range(n_digits)]
 
-        for long_line in lines_of_row_string:
+        for long_line in row_strings:
             splited_lines = [long_line[i:i+self.char_width] for i in range(0, len(long_line), self.char_width)]
             for i in range(n_digits):
                 digits[i].append(splited_lines[i])
@@ -59,34 +61,34 @@ class Display:
             print("")
 
 
-def next_element(element):
+def next_permutation(sequence: list):
     index_digit_to_swap = -1
     last_digit_value = -1
-    for i in range(len(element)-1, -1, -1):
-        if element[i] < last_digit_value:
+    for i in range(len(sequence)-1, -1, -1):
+        if sequence[i] < last_digit_value:
             index_digit_to_swap = i
             break
-        last_digit_value = element[i]
+        last_digit_value = sequence[i]
     else:
         return None
 
     min_index = -1
     last_min = 99999
-    for i in range(index_digit_to_swap+1, len(element)):
-        if element[index_digit_to_swap] < element[i] < last_min:
+    for i in range(index_digit_to_swap+1, len(sequence)):
+        if sequence[index_digit_to_swap] < sequence[i] < last_min:
             min_index = i
-            last_min = element[i]
+            last_min = sequence[i]
 
-    element[index_digit_to_swap], element[min_index] = element[min_index], element[index_digit_to_swap]
+    sequence[index_digit_to_swap], sequence[min_index] = sequence[min_index], sequence[index_digit_to_swap]
 
-    return element[:index_digit_to_swap+1] + sorted(element[index_digit_to_swap+1:])
+    return sequence[:index_digit_to_swap+1] + sorted(sequence[index_digit_to_swap+1:])
 
 
 if __name__ == "__main__":
     display = Display()
     lines = [input() for _ in range(Display.char_height)]
     parsed = display.parse(lines)
-    next = next_element(parsed)
+    next = next_permutation(parsed)
     if next is None:
         print("The End")
     else:
