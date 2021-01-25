@@ -8,7 +8,7 @@
 """
 
 
-def print_every_combination(collection: list, picked_items: list, to_pick: int):
+def print_every_combination(pool: list, picked_items: list, to_pick: int):
     # nCr 개의 출력이 나올 겁니다.
 
     # 다 뽑았으면 출력하고 끝냅니다.
@@ -16,7 +16,7 @@ def print_every_combination(collection: list, picked_items: list, to_pick: int):
         print(' '.join(map(lambda x: str(x), picked_items)))
         return
 
-    for item in collection:
+    for item in pool:
         # 이미 장바구니에 넣었으면 넘어가요~
         if item in picked_items:
             continue
@@ -26,12 +26,12 @@ def print_every_combination(collection: list, picked_items: list, to_pick: int):
             continue
 
         # 지금까지 뽑은 아이템 + 지금 뽑은 아이템으로 새 객체를 만들어 다음 레벨로 갑니다.
-        print_every_combination(collection, picked_items + [item], to_pick - 1)
+        print_every_combination(pool, picked_items + [item], to_pick - 1)
 
 
-def run_test_case(collection):
+def run_test_case(pool):
     print_every_combination(
-        collection,  # 전체 중에서
+        pool,  # 전체 중에서
         [],          # 빈 장바구니에
         6            # 몇 개를 담을까요
     )
