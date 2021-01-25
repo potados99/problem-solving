@@ -1,6 +1,12 @@
 # 6603 로또
 # https://www.acmicpc.net/problem/6603
 
+"""
+7 1 2 3 4 5 6 7
+8 1 2 3 5 8 13 21 34
+0
+"""
+
 
 def print_every_combination(collection: list, picked_items: list, to_pick: int):
     # nCr 개의 출력이 나올 겁니다.
