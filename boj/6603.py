@@ -31,7 +31,7 @@ def print_every_combination(pool: list, picked_items: list, to_pick: int):
 
 def run_test_case(pool):
     print_every_combination(
-        pool,  # 전체 중에서
+        pool,        # 전체 중에서
         [],          # 빈 장바구니에
         6            # 몇 개를 담을까요
     )
