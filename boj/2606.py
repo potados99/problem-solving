@@ -41,8 +41,8 @@ class Graph:
         start_node = self.nodes[start_node_key]
         self._search_dfs(start_node)
 
-        # Key가 1이 아니며 이미 방문된 노드의 갯수를 구합니다.
-        return list(map(lambda node: node.key != 1 and node.visited, self.nodes.values())).count(True)
+        # 시작 노드를 제외하고, 이미 방문된 노드의 갯수를 구합니다.
+        return list(map(lambda node: node.key != start_node_key and node.visited, self.nodes.values())).count(True)
 
 
 g = Graph()
