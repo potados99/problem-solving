@@ -1,5 +1,5 @@
 # 6603 로또
-# https://www.acmicpc.net/problem/6603고
+# https://www.acmicpc.net/problem/6603
 
 # https://jun-itworld.tistory.com/15 보고 깊게 감명받아 다시 풀었습니다.
 
