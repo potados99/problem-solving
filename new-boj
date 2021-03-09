@@ -11,6 +11,7 @@
 
 # 현재 스크립트의 절대 경로를 구해 내야 합니다.
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+solution_dir="$DIR/boj"
 
 # 인자가 주어졌으면 인자로부터, 아니면 입력을 받아서 문제 정보를 가져옵니다.
 if [ "$#" -eq 0 ]; then
@@ -33,11 +34,20 @@ elif [[ $problem_info =~ ^https://www.acmicpc.net/problem/[0-9]+$ ]]; then
 else
   # 아니면(비어있거나 숫자 아니거나 링크도 아닐 때) 뻗습니다.
   echo "문제 번호 또는 링크가 필요합니다!"
+  exit 1
+fi
+
+# 새 파일 이름이 확정되었습니다.
+solution_file="$solution_dir/$problem_number.py"
+
+# 그런데 해당 문제가 이미 푼 문제일 수도 있습니다!
+if [ -f "$solution_file" ]; then
+  echo "$problem_number번 문제의 솔루션이 이미 존재합니다!"
+  exit 1
 fi
 
 # 이제 필요한 정보는 모두 구했습니다.
 # 할 일 합니다.
-solution_file="$DIR/boj/$problem_number.py"
 problem_link="https://www.acmicpc.net/problem/$problem_number"
 problem_page=$(curl -s -N "$problem_link")
 problem_name=$(echo "$problem_page" | sed -n "s/^.*<title>\(.*\)<\/title>.*$/\1/p")
