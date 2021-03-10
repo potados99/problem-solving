@@ -54,7 +54,7 @@ int bfs() {
             int nCount = (count + 1) % m;
             int nDaynight = tickToDaynight(count + 1);
 
-            if (nx < 0 | ny < 0 || nx >= n || ny >= n || visited[nx][ny][nCount][nDaynight]) {
+            if (nx < 0 || ny < 0 || nx >= n || ny >= n || visited[nx][ny][nCount][nDaynight]) {
                 continue;
             }
 
@@ -67,7 +67,7 @@ int bfs() {
                     nx += dx[i];
                     ny += dy[i];
 
-                    if (nx < 0 | ny < 0 || nx >= n || ny >= n || visited[nx][ny][nCount][nDaynight]) {
+                    if (nx < 0 || ny < 0 || nx >= n || ny >= n || visited[nx][ny][nCount][nDaynight]) {
                         break;
                     } else if (maze[nx][ny] == 0) {
                         visited[nx][ny][nCount][nDaynight] = true;
