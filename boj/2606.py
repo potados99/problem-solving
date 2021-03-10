@@ -31,9 +31,9 @@ class Graph:
 
     def _search_dfs(self, node: Node):
         for adj in node.adjacent:
-            if adj.visited:
+            if adj.visits:
                 continue
-            adj.visited = True
+            adj.visits = True
 
             self._search_dfs(adj)
 
@@ -42,7 +42,7 @@ class Graph:
         self._search_dfs(start_node)
 
         # 시작 노드를 제외하고, 이미 방문된 노드의 갯수를 구합니다.
-        return list(map(lambda node: node.key != start_node_key and node.visited, self.nodes.values())).count(True)
+        return list(map(lambda node: node.key != start_node_key and node.visits, self.nodes.values())).count(True)
 
 
 g = Graph()
