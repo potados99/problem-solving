@@ -3,8 +3,8 @@
 
 import sys; input = sys.stdin.readline
 
-print("""\    /\\
+print("""\\    /\\
  )  ( ')
 (  /  )
- \(__)|
+ \\(__)|
 """)
