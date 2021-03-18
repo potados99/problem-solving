@@ -5,4 +5,4 @@ import sys; input = sys.stdin.readline
 
 n, m = map(int, input().split())
 
-print((n-1) + n*(m-1))
+print(n*m - 1)
