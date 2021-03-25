@@ -4,7 +4,7 @@ function generate_project_tree() {
   # Original from https://stackoverflow.com/a/35889620/11929317
   # This is a ported version for mac
 
-  IGNORED="venv|update-readme|README.md"
+  IGNORED="venv|update-readme|new-boj|README.md"
   SED_FOR_MAC="gsed"
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
