@@ -30,49 +30,53 @@ class World:
                 self.map[x][y].is_land = (world_map[y][x] == 1)
 
     def mark_islands(self, position: Position):
-        if not self._is_land_here(position):
+        """
+        주어진 위치에 육지가 있다면, 연결된 모든 육지를 찾아 표시하고 number_of_islands를 1 증가시킵니다.
+
+        :param position: 주어진 위치.
+        :return: 읎음.
+        """
+        if not self._is_land(position):
             return
 
-        if self._already_marked_here(position):
+        if self._is_already_marked(position):
             return
 
         stack = [position]
-        newly_marked = False
 
         while stack:
             popped = stack.pop()
+
             self.map[popped.x][popped.y].marked = True
-            newly_marked = True
 
             next_positions = [
-                p for p in self._eight_way_available(popped)
-                if self._is_land_here(p) and not self._already_marked_here(p)
+                p for p in self._eight_way_in_map(popped)
+                if self._is_land(p) and not self._is_already_marked(p)
             ]
 
             stack.extend(next_positions)
 
-        if newly_marked:
-            self.number_of_islands += 1
+        self.number_of_islands += 1
 
-    def _eight_way_available(self, position: Position):
+    def _eight_way_in_map(self, position: Position):
         dx = [0, -1, -1, -1, 0, 1, 1, 1]
         dy = [1, 1, 0, -1, -1, -1, 0, 1]
 
         candidates = [Position(position.x+dx[i], position.y+dy[i]) for i in range(8)]
 
-        return [c for c in candidates if self._in_map(c)]
+        return [c for c in candidates if self._is_in_map(c)]
 
-    def _is_land_here(self, position: Position):
-        return self._in_map(position) and self.map[position.x][position.y].is_land
-
-    def _already_marked_here(self, position: Position):
-        return self.map[position.x][position.y].marked
-
-    def _in_map(self, position: Position):
+    def _is_in_map(self, position: Position):
         return 0 <= position.x < self.width and 0 <= position.y < self.height
 
+    def _is_land(self, position: Position):
+        return self._is_in_map(position) and self.map[position.x][position.y].is_land
 
-if __name__ == '__main__':
+    def _is_already_marked(self, position: Position):
+        return self._is_in_map(position) and self.map[position.x][position.y].marked
+
+
+def go():
     while True:
         w, h = map(int, input().split())
 
@@ -88,3 +92,7 @@ if __name__ == '__main__':
                 world.mark_islands(Position(x, y))
 
         print(world.number_of_islands)
+
+
+if __name__ == '__main__':
+    go()
